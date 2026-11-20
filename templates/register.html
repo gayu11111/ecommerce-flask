@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="auth-card">
+    <h1>Create account</h1>
+    <p class="muted">Join ShopEasy to save your cart and track orders</p>
+
+    <form method="post">
+        <label for="name">Full name</label>
+        <input id="name" type="text" name="name" value="{{ name or '' }}" placeholder="Your name" required>
+
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email" value="{{ email or '' }}" placeholder="you@example.com" required>
+
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" placeholder="At least 6 characters" required>
+
+        <button type="submit" class="btn full">Register</button>
+    </form>
+
+    <p class="auth-switch">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+</div>
+
+{% endblock %}

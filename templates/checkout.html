@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="page-title">Checkout</h1>
+
+<div class="cart-layout">
+    <form class="checkout-form" method="post">
+        <h2>Delivery address</h2>
+
+        <label for="name">Full name</label>
+        <input id="name" type="text" name="name" value="{{ form.get('name', '') }}" required>
+
+        <label for="phone">Phone</label>
+        <input id="phone" type="tel" name="phone" value="{{ form.get('phone', '') }}" placeholder="10-digit mobile number" required>
+
+        <label for="address">Address</label>
+        <input id="address" type="text" name="address" value="{{ form.get('address', '') }}" placeholder="House no., street, area" required>
+
+        <div class="two-col">
+            <div>
+                <label for="city">City</label>
+                <input id="city" type="text" name="city" value="{{ form.get('city', '') }}" required>
+            </div>
+            <div>
+                <label for="pin">PIN code</label>
+                <input id="pin" type="text" name="pin" value="{{ form.get('pin', '') }}" required>
+            </div>
+        </div>
+
+        <h2>Payment method</h2>
+        <label class="radio-box"><input type="radio" name="payment" value="Cash on delivery" checked> Cash on delivery</label>
+        <label class="radio-box"><input type="radio" name="payment" value="UPI"> UPI</label>
+        <label class="radio-box"><input type="radio" name="payment" value="Card"> Debit or credit card</label>
+
+        <button type="submit" class="btn full">Place order · ₹{{ '{:,.0f}'.format(total) }}</button>
+    </form>
+
+    <aside class="summary">
+        <h2>Your order</h2>
+        {% for item in items %}
+        <div class="sum-row">
+            <span>{{ item['name'] }} × {{ item['quantity'] }}</span>
+            <strong>₹{{ '{:,.0f}'.format(item['price'] * item['quantity']) }}</strong>
+        </div>
+        {% endfor %}
+        <div class="sum-row"><span>Delivery</span><strong class="free">Free</strong></div>
+        <div class="sum-total"><span>Total</span><strong>₹{{ '{:,.0f}'.format(total) }}</strong></div>
+    </aside>
+</div>
+
+{% endblock %}

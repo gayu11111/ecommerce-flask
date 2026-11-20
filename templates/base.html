@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ShopEasy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="topbar">Free delivery on orders above ₹499 · Easy 7-day returns</div>
+
+    <header class="site-header">
+        <div class="container header-row">
+            <a href="{{ url_for('index') }}" class="logo">🛍 ShopEasy</a>
+
+            <form class="search" action="{{ url_for('index') }}" method="get">
+                <input type="text" name="search" placeholder="Search for products..."
+                       value="{{ search or '' }}" aria-label="Search products">
+                <button type="submit">Search</button>
+            </form>
+
+            <nav>
+                <a href="{{ url_for('orders') }}">My Orders</a>
+                {% if user and user['is_admin'] %}
+                    <a href="{{ url_for('admin_products') }}">Admin</a>
+                {% endif %}
+                {% if user %}
+                    <span class="hello">Hi, {{ user['name'].split()[0] }}</span>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Login</a>
+                    <a href="{{ url_for('register') }}">Register</a>
+                {% endif %}
+                <a href="{{ url_for('cart') }}" class="cart-link">Cart <span class="badge">{{ cart_count }}</span></a>
+            </nav>
+        </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="container flashes">
+        {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>ShopEasy · Built with Flask + SQLite</footer>
+</body>
+</html>

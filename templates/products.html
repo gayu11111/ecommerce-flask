@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero">
+    <span class="pill">NEW SEASON</span>
+    <h1>Everyday essentials, delivered to your door.</h1>
+    <p>Tech, stationery, clothing and bags at honest prices.</p>
+    <a href="#shop" class="btn-light">Shop now</a>
+</section>
+
+<div class="layout" id="shop">
+    <form class="filters" method="get">
+        <input type="hidden" name="search" value="{{ search }}">
+        <h2>Filters</h2>
+
+        <h3>Category</h3>
+        <label><input type="radio" name="category" value="" {% if not selected %}checked{% endif %}> All products</label>
+        {% for c in categories %}
+        <label>
+            <input type="radio" name="category" value="{{ c['category'] }}"
+                   {% if c['category'] == selected %}checked{% endif %}> {{ c['category'] }}
+        </label>
+        {% endfor %}
+
+        <h3>Price (₹)</h3>
+        <div class="price-row">
+            <input type="number" name="min_price" placeholder="Min" value="{{ min_price }}">
+            <input type="number" name="max_price" placeholder="Max" value="{{ max_price }}">
+        </div>
+
+        <label><input type="checkbox" name="in_stock" value="1" {% if in_stock %}checked{% endif %}> In stock only</label>
+
+        <label class="sort">Sort by
+            <select name="sort">
+                <option value="featured" {% if sort == 'featured' %}selected{% endif %}>Featured</option>
+                <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: low to high</option>
+                <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: high to low</option>
+                <option value="name" {% if sort == 'name' %}selected{% endif %}>Name: A to Z</option>
+            </select>
+        </label>
+
+        <button type="submit" class="btn">Apply filters</button>
+    </form>
+
+    <section class="products-area">
+        <h2 class="section-title">All products</h2>
+        <p class="muted">Showing {{ products|length }} products</p>
+
+        <div class="grid">
+            {% for p in products %}
+            <article class="card">
+                <a href="{{ url_for('product_detail', product_id=p['id']) }}" class="thumb">
+                    <img src="{{ p['image_url'] }}" alt="{{ p['name'] }}">
+                    {% if p['stock'] == 0 %}
+                        <span class="tag out">Out of stock</span>
+                    {% elif p['stock'] < 10 %}
+                        <span class="tag low">Only {{ p['stock'] }} left</span>
+                    {% endif %}
+                </a>
+                <div class="card-body">
+                    <span class="cat">{{ p['category'] }}</span>
+                    <h3>{{ p['name'] }}</h3>
+                    <p class="desc">{{ p['description'] }}</p>
+                    <div class="card-foot">
+                        <span class="price">₹{{ '{:,.0f}'.format(p['price']) }}</span>
+                        {% if p['stock'] > 0 %}
+                        <form method="post" action="{{ url_for('cart_add', product_id=p['id']) }}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn small">+ Add</button>
+                        </form>
+                        {% else %}
+                            <button class="btn small disabled" disabled>Sold out</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% else %}
+            <p>No products found.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+{% endblock %}

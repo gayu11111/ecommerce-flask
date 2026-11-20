@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<nav class="crumbs">
+    <a href="{{ url_for('index') }}">Products</a> /
+    <a href="{{ url_for('index', category=p['category']) }}">{{ p['category'] }}</a> /
+    <span>{{ p['name'] }}</span>
+</nav>
+
+<section class="detail">
+    <div class="detail-img"><img src="{{ p['image_url'] }}" alt="{{ p['name'] }}"></div>
+
+    <div class="detail-info">
+        <span class="pill-soft">{{ p['category'] }}</span>
+        <h1>{{ p['name'] }}</h1>
+        <div class="detail-price">₹{{ '{:,.0f}'.format(p['price']) }}</div>
+
+        {% if p['stock'] > 0 %}
+            <p class="stock ok">In stock · {{ p['stock'] }} available</p>
+        {% else %}
+            <p class="stock bad">Out of stock</p>
+        {% endif %}
+
+        <p class="detail-desc">{{ p['description'] }}</p>
+
+        {% if p['stock'] > 0 %}
+        <form class="buy-row" method="post" action="{{ url_for('cart_add', product_id=p['id']) }}">
+            <input type="number" name="quantity" value="1" min="1" max="{{ p['stock'] }}" aria-label="Quantity">
+            <button type="submit" class="btn">Add to cart</button>
+        </form>
+        {% endif %}
+    </div>
+</section>
+
+<h2 class="section-title">You may also like</h2>
+<div class="grid">
+    {% for r in related %}
+    <a class="mini" href="{{ url_for('product_detail', product_id=r['id']) }}">
+        <img src="{{ r['image_url'] }}" alt="">
+        <span><strong>{{ r['name'] }}</strong><br>₹{{ '{:,.0f}'.format(r['price']) }}</span>
+    </a>
+    {% endfor %}
+</div>
+
+{% endblock %}

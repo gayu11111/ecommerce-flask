@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="admin-head">
+    <div>
+        <h1 class="page-title">Manage products</h1>
+        <div class="tabs">
+            <a href="{{ url_for('admin_products') }}" class="active">Products</a>
+            <a href="{{ url_for('admin_orders') }}">Orders</a>
+        </div>
+    </div>
+    <a href="{{ url_for('admin_add') }}" class="btn">+ Add product</a>
+</div>
+
+<div class="table-wrap">
+<table>
+    <thead>
+        <tr><th>ID</th><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+        {% for p in products %}
+        <tr>
+            <td>{{ p['id'] }}</td>
+            <td><strong>{{ p['name'] }}</strong></td>
+            <td>{{ p['category'] }}</td>
+            <td>₹{{ '{:,.0f}'.format(p['price']) }}</td>
+            <td>
+                {% if p['stock'] == 0 %}<span class="status cancelled">Out of stock</span>
+                {% elif p['stock'] < 10 %}<span class="status placed">{{ p['stock'] }} (low)</span>
+                {% else %}{{ p['stock'] }}{% endif %}
+            </td>
+            <td class="actions">
+                <a href="{{ url_for('admin_edit', product_id=p['id']) }}" class="btn small light">Edit</a>
+                <form method="post" action="{{ url_for('admin_delete', product_id=p['id']) }}"
+                      onsubmit="return confirm('Delete this product?');">
+                    <button type="submit" class="btn small danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock %}

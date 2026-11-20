@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="page-title">My orders</h1>
+
+{% for entry in orders %}
+{% set o = entry.order %}
+<article class="order-card">
+    <header>
+        <div><small>Order</small><strong>#{{ o['id'] }}</strong></div>
+        <div><small>Placed on</small><strong>{{ o['created_at'][:10] }}</strong></div>
+        <div><small>Total</small><strong>₹{{ '{:,.0f}'.format(o['total']) }}</strong></div>
+        <span class="status {{ o['status']|lower }}">{{ o['status'] }}</span>
+    </header>
+
+    <ul>
+        {% for item in entry['items'] %}
+        <li>
+            <span>{{ item['name'] }} × {{ item['quantity'] }}</span>
+            <strong>₹{{ '{:,.0f}'.format(item['price'] * item['quantity']) }}</strong>
+        </li>
+        {% endfor %}
+    </ul>
+    <p class="muted small-text">Deliver to: {{ o['address'] }} · Payment: {{ o['payment'] }}</p>
+</article>
+{% else %}
+<div class="empty">
+    <p>You have not placed any orders yet.</p>
+    <a href="{{ url_for('index') }}" class="btn">Start shopping</a>
+</div>
+{% endfor %}
+
+{% endblock %}
